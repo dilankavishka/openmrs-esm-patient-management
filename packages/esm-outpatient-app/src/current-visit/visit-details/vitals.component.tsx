@@ -1,14 +1,13 @@
 import React from 'react';
-import { Button, Grid, Row, Tag, Tile } from 'carbon-components-react';
 import { useTranslation } from 'react-i18next';
-import { calculateBMI } from '../current-visit.resource';
-import { PatientVitals } from '../../types/index';
-import ArrowRight16 from '@carbon/icons-react/es/arrow--right/16';
+import { Button, Grid, Row, Tag, Tile } from '@carbon/react';
+import { ArrowRight, CircleFillGlyph } from '@carbon/react/icons';
 import { navigate, useConfig } from '@openmrs/esm-framework';
-import styles from './triage-note.scss';
-import CircleFillGlyph from '@carbon/icons-react/es/circle--solid/16';
+import { calculateBMI } from '../current-visit.resource';
 import { useVitalsConceptMetadata } from '../hooks/useVitalsConceptMetadata';
 import { ConfigObject } from '../../config-schema';
+import { PatientVitals } from '../../types/index';
+import styles from './triage-note.scss';
 
 interface VitalsComponentProps {
   vitals: Array<PatientVitals>;
@@ -49,7 +48,7 @@ const Vitals: React.FC<VitalsComponentProps> = ({ vitals, patientUuid }) => {
               </Tile>
               <Tile>
                 <p>
-                  {t('heartRate', 'Heart rate')} <CircleFillGlyph className={styles.notification} />
+                  {t('heartRate', 'Heart rate')} <CircleFillGlyph className={styles.notification} size={16} />
                 </p>
                 <div className={styles.vitalValuesWrapper}>
                   <p className={styles.vitalValues}>{vitalsToDisplay.pulse ? vitalsToDisplay.pulse : '--'}</p>
@@ -119,7 +118,7 @@ const Vitals: React.FC<VitalsComponentProps> = ({ vitals, patientUuid }) => {
           <Button
             size="small"
             kind="ghost"
-            renderIcon={ArrowRight16}
+            renderIcon={(props) => <ArrowRight size={16} {...props} />}
             onClick={() => navigate({ to: `\${openmrsSpaBase}/patient/${patientUuid}/chart` })}
             iconDescription={t('vitalsForm', 'Vitals form')}>
             {t('vitalsForm', 'Vitals form')}

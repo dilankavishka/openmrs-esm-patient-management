@@ -5,6 +5,7 @@ import {
   DataTable,
   DataTableHeader,
   DataTableSkeleton,
+  DefinitionTooltip,
   Dropdown,
   OverflowMenu,
   OverflowMenuItem,
@@ -25,11 +26,8 @@ import {
   Tabs,
   Tag,
   Tile,
-  TooltipDefinition,
-} from 'carbon-components-react';
-import Add16 from '@carbon/icons-react/es/add/16';
-import Group16 from '@carbon/icons-react/es/group/16';
-import InProgress16 from '@carbon/icons-react/es/in-progress/16';
+} from '@carbon/react';
+import { Add, Group, InProgress } from '@carbon/react/icons';
 import { useLayoutType, ConfigurableLink, navigate, showModal } from '@openmrs/esm-framework';
 import {
   useVisitQueueEntries,
@@ -63,7 +61,7 @@ function ActionsMenu({ patientUuid }: { patientUuid: string }) {
   }, [patientUuid]);
 
   return (
-    <OverflowMenu light selectorPrimaryFocus={'#editPatientDetails'} size="sm" flipped>
+    <OverflowMenu ariaLabel="Actions menu" light selectorPrimaryFocus={'#editPatientDetails'} size="sm" flipped>
       <OverflowMenuItem
         className={styles.menuItem}
         id="#editPatientDetails"
@@ -97,9 +95,9 @@ function ActionsMenu({ patientUuid }: { patientUuid: string }) {
 function StatusIcon({ status }) {
   switch (status as QueueStatus) {
     case 'Waiting':
-      return <InProgress16 />;
+      return <InProgress size={16} />;
     case 'In Service':
-      return <Group16 />;
+      return <Group size={16} />;
     default:
       return null;
   }
@@ -182,17 +180,14 @@ function ActiveVisitsTable() {
         content: (
           <>
             {entry?.priorityComment ? (
-              <TooltipDefinition
-                className={styles.tooltip}
-                align="start"
-                direction="bottom"
-                tooltipText={entry.priorityComment}>
+              <DefinitionTooltip className={styles.tooltip} align="bottom-left" definition={entry.priorityComment}>
                 <Tag
+                  role="tooltip"
                   className={entry.priority === 'Priority' ? styles.priorityTag : styles.tag}
                   type={getTagType(entry.priority as string)}>
                   {entry.priority}
                 </Tag>
-              </TooltipDefinition>
+              </DefinitionTooltip>
             ) : (
               <Tag
                 className={entry.priority === 'Priority' ? styles.priorityTag : styles.tag}
@@ -254,9 +249,9 @@ function ActiveVisitsTable() {
         <div className={styles.headerContainer}>
           <span className={styles.heading}>{t('activeVisits', 'Active visits')}</span>
           <Button
-            size="small"
+            size="sm"
             kind="secondary"
-            renderIcon={Add16}
+            renderIcon={(props) => <Add size={16} {...props} />}
             onClick={() => setShowOverlay(true)}
             iconDescription={t('addPatientList', 'Add patient to list')}>
             {t('addPatientList', 'Add patient to list')}
@@ -268,7 +263,7 @@ function ActiveVisitsTable() {
           headers={tableHeaders}
           overflowMenuOnHover={isDesktop ? true : false}
           rows={tableRows}
-          size="compact"
+          size="xs"
           useZebraStyles>
           {({ rows, headers, getHeaderProps, getTableProps, getRowProps, onInputChange }) => (
             <TableContainer className={styles.tableContainer}>
@@ -314,7 +309,7 @@ function ActiveVisitsTable() {
                           {row.cells.map((cell) => (
                             <TableCell key={cell.id}>{cell.value?.content ?? cell.value}</TableCell>
                           ))}
-                          <TableCell className="bx--table-column-menu">
+                          <TableCell className="cds--table-column-menu">
                             <ActionsMenu patientUuid={tableRows?.[index]?.patientUuid} />
                           </TableCell>
                         </TableExpandRow>
@@ -350,7 +345,11 @@ function ActiveVisitsTable() {
                       <p className={styles.helper}>{t('checkFilters', 'Check the filters above')}</p>
                     </div>
                     <p className={styles.separator}>{t('or', 'or')}</p>
-                    <Button kind="ghost" size="small" renderIcon={Add16} onClick={() => setShowOverlay(true)}>
+                    <Button
+                      kind="ghost"
+                      size="sm"
+                      renderIcon={(props) => <Add size={16} {...props} />}
+                      onClick={() => setShowOverlay(true)}>
                       {t('addPatientToList', 'Add patient to list')}
                     </Button>
                   </Tile>
@@ -372,15 +371,19 @@ function ActiveVisitsTable() {
           iconDescription={t('addPatientToList', 'Add patient to list')}
           kind="secondary"
           onClick={() => setShowOverlay(true)}
-          renderIcon={Add16}
-          size="small">
+          renderIcon={(props) => <Add size={16} {...props} />}
+          size="sm">
           {t('addPatientList', 'Add patient to list')}
         </Button>
       </div>
       <div className={styles.tileContainer}>
         <Tile className={styles.tile}>
           <p className={styles.content}>{t('noPatientsToDisplay', 'No patients to display')}</p>
-          <Button kind="ghost" size="small" renderIcon={Add16} onClick={() => setShowOverlay(true)}>
+          <Button
+            kind="ghost"
+            size="sm"
+            renderIcon={(props) => <Add size={16} {...props} />}
+            onClick={() => setShowOverlay(true)}>
             {t('addPatientToList', 'Add patient to list')}
           </Button>
         </Tile>
