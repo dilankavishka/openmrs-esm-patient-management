@@ -7,7 +7,6 @@
   ],
   "moduleNameMapper": {
     "\\.(s?css)$": "identity-obj-proxy",
-    "^@carbon/charts": "identity-obj-proxy",
     "@openmrs/esm-framework": "@openmrs/esm-framework/mock",
     "lodash-es": "lodash"
   },
