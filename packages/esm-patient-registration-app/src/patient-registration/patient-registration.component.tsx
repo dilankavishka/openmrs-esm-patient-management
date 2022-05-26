@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useContext, useMemo } from 'react';
-import XAxis16 from '@carbon/icons-react/es/x-axis/16';
-import { Button, Link } from 'carbon-components-react';
-import BeforeSavePrompt from './before-save-prompt';
-import styles from './patient-registration.scss';
+import { Button, Link } from '@carbon/react';
+import { XAxis } from '@carbon/react/icons';
 import { useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Formik, Form, FormikHelpers } from 'formik';
 import {
   createErrorHandler,
@@ -13,17 +12,19 @@ import {
   interpolateUrl,
   usePatient,
 } from '@openmrs/esm-framework';
-import { useTranslation } from 'react-i18next';
 import { validationSchema as initialSchema } from './validation/patient-registration-validation';
 import { FormValues, CapturePhotoProps } from './patient-registration-types';
 import { PatientRegistrationContext } from './patient-registration-context';
 import { SavePatientForm } from './form-manager';
 import { usePatientPhoto } from './patient-registration.resource';
 import { DummyDataInput } from './input/dummy-data/dummy-data-input.component';
-import { getSection } from './section/section-helper';
 import { cancelRegistration, parseAddressTemplateXml, scrollIntoView } from './patient-registration-utils';
 import { useInitialAddressFieldValues, useInitialFormValues, usePatientUuidMap } from './patient-registration-hooks';
 import { ResourcesContext } from '../offline.resources';
+import { builtInSections, RegistrationConfig, SectionDefinition } from '../config-schema';
+import { SectionWrapper } from './section/section-wrapper.component';
+import BeforeSavePrompt from './before-save-prompt';
+import styles from './patient-registration.scss';
 
 let exportedInitialFormValuesForTesting = {} as FormValues;
 
@@ -36,15 +37,13 @@ export interface PatientRegistrationProps {
 export const PatientRegistration: React.FC<PatientRegistrationProps> = ({ savePatientForm, match, isOffline }) => {
   const { currentSession, addressTemplate, identifierTypes } = useContext(ResourcesContext);
   const { search } = useLocation();
-  const config = useConfig();
-  const [sections, setSections] = useState([]);
+  const config = useConfig() as RegistrationConfig;
   const [target, setTarget] = useState<undefined | string>();
   const [validationSchema, setValidationSchema] = useState(initialSchema);
   const { patientUuid: uuidOfPatientToEdit } = match.params;
   const { isLoading: isLoadingPatientToEdit, patient: patientToEdit } = usePatient(uuidOfPatientToEdit);
   const { t } = useTranslation();
   const [capturePhotoProps, setCapturePhotoProps] = useState<CapturePhotoProps | null>(null);
-  const [fieldConfigs, setFieldConfigs] = useState({});
   const [initialFormValues, setInitialFormValues] = useInitialFormValues(uuidOfPatientToEdit);
   const [initialAddressFieldValues] = useInitialAddressFieldValues(uuidOfPatientToEdit);
   const [patientUuidMap] = usePatientUuidMap(uuidOfPatientToEdit);
@@ -57,18 +56,15 @@ export const PatientRegistration: React.FC<PatientRegistrationProps> = ({ savePa
     exportedInitialFormValuesForTesting = initialFormValues;
   }, [initialFormValues]);
 
-  useEffect(() => {
-    if (config?.sections) {
-      const configuredSections = config.sections.map((section) => ({
-        id: section,
-        name: config.sectionDefinitions[section].name,
-        fields: config.sectionDefinitions[section].fields,
-      }));
-
-      setSections(configuredSections);
-      setFieldConfigs(config.fieldConfigurations);
-    }
-  }, [config.sections, config.fieldConfigurations, config.sectionDefinitions]);
+  const sections: Array<SectionDefinition> = useMemo(() => {
+    return config.sections
+      .map(
+        (sectionName) =>
+          config.sectionDefinitions.filter((s) => s.id == sectionName)[0] ??
+          builtInSections.filter((s) => s.id == sectionName)[0],
+      )
+      .filter((s) => s);
+  }, [config.sections, config.sectionDefinitions]);
 
   useEffect(() => {
     const addressTemplateXml = addressTemplate.results[0].value;
@@ -80,7 +76,7 @@ export const PatientRegistration: React.FC<PatientRegistrationProps> = ({ savePa
     const { addressFieldValues, addressValidationSchema } = parseAddressTemplateXml(addressTemplateXml);
     setValidationSchema((validationSchema) => validationSchema.concat(addressValidationSchema));
 
-    // `=== false` is here on purpose (`inEditMode` is a triple state value).
+    // `=== false` is here on purpose (`inEditMode` can be null).
     // We *only* want to set initial address field values when *creating* a patient.
     // We must wait until after loading for this info.
     if (inEditMode === false) {
@@ -164,7 +160,7 @@ export const PatientRegistration: React.FC<PatientRegistrationProps> = ({ savePa
                 {sections.map((section) => (
                   <div className={`${styles.space05} ${styles.touchTarget}`} key={section.name}>
                     <Link className={styles.linkName} onClick={() => scrollIntoView(section.id)}>
-                      <XAxis16 /> {section.name}
+                      <XAxis size={16} /> {section.name}
                     </Link>
                   </div>
                 ))}
@@ -182,7 +178,6 @@ export const PatientRegistration: React.FC<PatientRegistrationProps> = ({ savePa
                   identifierTypes: identifierTypes,
                   validationSchema,
                   setValidationSchema,
-                  fieldConfigs,
                   values: props.values,
                   inEditMode,
                   setFieldValue: props.setFieldValue,
@@ -191,7 +186,11 @@ export const PatientRegistration: React.FC<PatientRegistrationProps> = ({ savePa
                   isOffline,
                 }}>
                 {sections.map((section, index) => (
-                  <div key={index}>{getSection(section, index)}</div>
+                  <SectionWrapper
+                    key={`registration-section-${section.id}`}
+                    sectionDefinition={section}
+                    index={index}
+                  />
                 ))}
               </PatientRegistrationContext.Provider>
             </div>

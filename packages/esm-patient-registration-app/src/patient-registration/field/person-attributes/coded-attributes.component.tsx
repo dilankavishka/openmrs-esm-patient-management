@@ -3,7 +3,7 @@ import styles from './../field.scss';
 import { Input } from '../../input/basic-input/input/input.component';
 import { useConfig } from '@openmrs/esm-framework';
 import { CodedPersonAttributeConfig } from '../../patient-registration-types';
-import { Select, SelectItem } from 'carbon-components-react';
+import { Select, SelectItem } from '@carbon/react';
 import { useConceptAnswers, usePersonAttributeType } from './person-attributes.resource';
 
 export interface CodedAttributesFieldProps {}

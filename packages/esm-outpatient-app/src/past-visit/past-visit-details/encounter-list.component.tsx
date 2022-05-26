@@ -1,15 +1,15 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   StructuredListHead,
   StructuredListCell,
   StructuredListRow,
   StructuredListBody,
   StructuredListWrapper,
-} from 'carbon-components-react';
-import { useTranslation } from 'react-i18next';
+} from '@carbon/react';
 import { formatDatetime, parseDate } from '@openmrs/esm-framework';
-import { FormattedEncounter } from './past-visit.component';
-import styles from './past-visit.scss';
+import { FormattedEncounter } from '../../types/index';
+import styles from '../past-visit.scss';
 
 interface EncounterListProps {
   encounters: Array<FormattedEncounter>;

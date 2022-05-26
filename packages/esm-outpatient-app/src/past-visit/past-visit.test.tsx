@@ -1,8 +1,8 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
-import PastVisit from './past-visit.component';
+import PastVisitSummary from './past-visit-details/past-visit-summary.component';
 import userEvent from '@testing-library/user-event';
-import { mockPatient } from '../../__mocks__/patient.mock';
+import { mockPatient } from '../../../../__mocks__/patient.mock';
 import { mockPastVisit } from '../../__mocks__/visits.mock';
 import { renderWithSwr } from '../../../../tools/test-helpers';
 import * as mockPastVisitResource from './past-visit.resource';
@@ -30,5 +30,5 @@ describe('PastVisit: ', () => {
 });
 
 function renderPastVisitTabs() {
-  renderWithSwr(<PastVisit patientUuid={mockPatient.id} />);
+  renderWithSwr(<PastVisitSummary patientUuid={mockPatient.id} encounters={[]} />);
 }

@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Dropdown } from 'carbon-components-react';
+import { Dropdown } from '@carbon/react';
 import { useTranslation } from 'react-i18next';
 import { SearchTypes } from '../types';
 import PatientInfo from '../patient-info/patient-info.component';
@@ -8,12 +8,12 @@ import styles from './search-results.scss';
 interface SearchResultsProps {
   patients: Array<any>;
   hidePanel?: any;
-  toggleSearchType: (searchMode: SearchTypes) => void;
+  toggleSearchType: (searchMode: SearchTypes, patientUuid: string) => void;
 }
 
 type SortingCriteria = 'firstNameFirst' | 'lastNameFirst' | 'oldest' | 'youngest';
 
-const SearchResults: React.FC<SearchResultsProps> = ({ patients }) => {
+const SearchResults: React.FC<SearchResultsProps> = ({ patients, toggleSearchType }) => {
   const { t } = useTranslation();
   const [selectedSortingCriteria, setSelectedSortingCriteria] = useState<SortingCriteria>('firstNameFirst');
   const fhirPatients = useMemo(() => {
@@ -95,7 +95,12 @@ const SearchResults: React.FC<SearchResultsProps> = ({ patients }) => {
       {sortedPatient.map((patient, index) => (
         <div key={`search-result-${index}`} className={styles.patientChart}>
           <div className={styles.container}>
-            <PatientInfo patient={patient} />
+            <PatientInfo
+              patient={patient}
+              handlePatientInfoClick={() => {
+                toggleSearchType(SearchTypes.SCHEDULED_VISITS, patient.id);
+              }}
+            />
           </div>
         </div>
       ))}
