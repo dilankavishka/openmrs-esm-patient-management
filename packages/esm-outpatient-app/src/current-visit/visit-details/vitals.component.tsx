@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Grid, Row, Tag, Tile } from '@carbon/react';
-import { ArrowRight, CircleFillGlyph } from '@carbon/react/icons';
+import { Button, Grid, Row, Tile } from '@carbon/react';
+import { ArrowRight, CircleFilled } from '@carbon/react/icons';
 import { navigate, useConfig } from '@openmrs/esm-framework';
 import { calculateBMI } from '../current-visit.resource';
 import { useVitalsConceptMetadata } from '../hooks/useVitalsConceptMetadata';
@@ -48,7 +48,7 @@ const Vitals: React.FC<VitalsComponentProps> = ({ vitals, patientUuid }) => {
               </Tile>
               <Tile>
                 <p>
-                  {t('heartRate', 'Heart rate')} <CircleFillGlyph className={styles.notification} size={16} />
+                  {t('heartRate', 'Heart rate')} <CircleFilled className={styles.notification} size={16} />
                 </p>
                 <div className={styles.vitalValuesWrapper}>
                   <p className={styles.vitalValues}>{vitalsToDisplay.pulse ? vitalsToDisplay.pulse : '--'}</p>

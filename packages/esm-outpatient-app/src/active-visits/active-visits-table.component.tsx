@@ -28,7 +28,7 @@ import {
   Tile,
 } from '@carbon/react';
 import { Add, Group, InProgress } from '@carbon/react/icons';
-import { useLayoutType, ConfigurableLink, navigate, showModal } from '@openmrs/esm-framework';
+import { useLayoutType, isDesktop, ConfigurableLink, navigate, showModal } from '@openmrs/esm-framework';
 import {
   useVisitQueueEntries,
   useServices,
@@ -110,7 +110,7 @@ function ActiveVisitsTable() {
   const [filteredRows, setFilteredRows] = useState<Array<MappedVisitQueueEntry>>([]);
   const [filter, setFilter] = useState('');
   const [showOverlay, setShowOverlay] = useState(false);
-  const isDesktop = useLayoutType() === 'desktop';
+  const layout = useLayoutType();
 
   useEffect(() => {
     if (filter) {
@@ -261,7 +261,7 @@ function ActiveVisitsTable() {
           data-floating-menu-container
           filterRows={handleFilter}
           headers={tableHeaders}
-          overflowMenuOnHover={isDesktop ? true : false}
+          overflowMenuOnHover={isDesktop(layout) ? true : false}
           rows={tableRows}
           size="xs"
           useZebraStyles>
