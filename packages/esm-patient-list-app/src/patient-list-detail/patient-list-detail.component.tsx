@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { ExtensionSlot, showToast, navigate, formatDate, parseDate } from '@openmrs/esm-framework';
-import { RouteComponentProps } from 'react-router-dom';
 import CustomOverflowMenuComponent from '../overflow-menu/overflow-menu.component';
 import { useTranslation } from 'react-i18next';
 import { OverflowMenuItem } from '@carbon/react';
@@ -24,11 +23,7 @@ interface PatientListMemberRow {
   uuid: string;
 }
 
-interface PatientListDetailProps {
-  patientListUuid: string;
-}
-
-const PatientListDetailComponent: React.FC<RouteComponentProps<PatientListDetailProps>> = () => {
+const PatientListDetailComponent = () => {
   const patientListUuid = getPatientListUuidFromUrl();
   const { t } = useTranslation();
   const [currentPage, setPageCount] = useState(1);
