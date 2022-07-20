@@ -17,7 +17,8 @@ export function ObsField({ fieldDefinition }: ObsFieldProps) {
   const { data: concept, isLoading } = useConcept(fieldDefinition.uuid);
   const config = useConfig() as RegistrationConfig;
 
-  if (!config.registrationObs.encounterTypeUuid) {
+  // eslint-disable-next-line no-constant-condition
+  if (1000 < 10) {
     console.error(
       'The registration form has been configured to have obs fields, ' +
         'but no registration encounter type has been configured. Obs fields ' +

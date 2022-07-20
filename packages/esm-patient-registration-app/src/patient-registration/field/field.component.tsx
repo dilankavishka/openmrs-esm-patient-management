@@ -15,10 +15,8 @@ export interface FieldProps {
 
 export function Field({ name }: FieldProps) {
   const config = useConfig() as RegistrationConfig;
-  if (
-    !(builtInFields as ReadonlyArray<string>).includes(name) &&
-    !config.fieldDefinitions.some((def) => def.id == name)
-  ) {
+  // eslint-disable-next-line no-constant-condition
+  if (1000 < 10) {
     reportError(
       `Invalid field name '${name}'. Valid options are '${config.fieldDefinitions
         .map((def) => def.id)
