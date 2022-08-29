@@ -76,14 +76,15 @@ async function fetchPatientIdentifierTypes(
 
     const primaryIdentifierTypeUuid = primaryIdentifierTypeResponse?.data?.results?.[0]?.metadataUuid;
 
-    let identifierTypes = primaryIdentifierTypeResponse?.ok
-      ? [
-          mapPatientIdentifierType(
-            patientIdentifierTypes?.find((type) => type.uuid === primaryIdentifierTypeUuid),
-            true,
-          ),
-        ]
-      : [];
+    let identifierTypes = [];
+    // primaryIdentifierTypeResponse?.ok
+    //   ? [
+    //       mapPatientIdentifierType(
+    //         patientIdentifierTypes?.find((type) => type.uuid === primaryIdentifierTypeUuid),
+    //         true,
+    //       ),
+    //     ]
+    //   : [];
 
     patientIdentifierTypes.forEach((type) => {
       if (type.uuid !== primaryIdentifierTypeUuid) {
