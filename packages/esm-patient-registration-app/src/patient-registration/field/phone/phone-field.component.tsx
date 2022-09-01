@@ -10,7 +10,7 @@ export const PhoneField: React.FC = () => {
       <Input
         id="phone"
         //This UUID will be fixed for all the distributions of OPENMRS.
-        name="attributes.14d4f066-15f5-102d-96e4-000c29c2a5d7"
+        name="attributes.b2c38640-2603-4629-aebd-3b54f33f1e3a"
         labelText={t('phoneNumberInputLabelText', 'Phone number')}
         light
       />

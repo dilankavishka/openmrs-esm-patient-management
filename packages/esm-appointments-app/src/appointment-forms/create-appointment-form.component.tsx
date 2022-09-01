@@ -44,7 +44,7 @@ interface AppointmentFormProps {
 }
 
 const CreateAppointmentsForm: React.FC<AppointmentFormProps> = ({ patientUuid }) => {
-  const { patient } = usePatient(patientUuid);
+  const { patient, isLoading: isLoadingPatient } = usePatient(patientUuid);
   const { appointmentKinds } = useConfig() as ConfigObject;
   const { daysOfTheWeek } = useConfig() as ConfigObject;
   const { t } = useTranslation();
@@ -61,7 +61,6 @@ const CreateAppointmentsForm: React.FC<AppointmentFormProps> = ({ patientUuid })
   const [endTime, setEndTime] = useState(dayjs(new Date()).format('hh:mm'));
   const [timeFormat, setTimeFormat] = useState<amPm>(new Date().getHours() >= 12 ? 'PM' : 'AM');
   const [userLocation, setUserLocation] = useState('');
-  const [contentSwitcherValue, setContentSwitcherValue] = useState(0);
   const [appointmentReminder, setAppointmentReminder] = useState(null);
   const [appointmentKind, setAppointmentKind] = useState('');
   const [frequency, setFrequency] = useState('');
@@ -148,13 +147,15 @@ const CreateAppointmentsForm: React.FC<AppointmentFormProps> = ({ patientUuid })
   return (
     <div>
       <div className={styles.patientInfo}>
-        <ExtensionSlot
-          extensionSlotName="patient-header-slot"
-          state={{
-            patient,
-            patientUuid: patientUuid,
-          }}
-        />
+        {patient && (
+          <ExtensionSlot
+            extensionSlotName="patient-header-slot"
+            state={{
+              patient,
+              patientUuid: patientUuid,
+            }}
+          />
+        )}
       </div>
 
       <div className={styles.formWrapper}>

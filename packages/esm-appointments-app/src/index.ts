@@ -71,6 +71,15 @@ function setupOpenMRS() {
         online: true,
         offline: true,
       },
+      {
+        name: 'change-appointment-status-modal',
+        load: getAsyncLifecycle(
+          () => import('./change-appointment-status/change-appointment-status.component'),
+          options,
+        ),
+        online: true,
+        offline: true,
+      },
     ],
   };
 }

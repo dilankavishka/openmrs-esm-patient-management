@@ -26,10 +26,11 @@ interface AppointmentsCalendarListViewProps {}
 const AppointmentsCalendarListView: React.FC<AppointmentsCalendarListViewProps> = () => {
   const { t } = useTranslation();
   const currentDate = useMemo(() => dayjs(new Date().setHours(0, 0)).format(omrsDateFormat), []);
-  const [selectedDurationIndex, setSelectedDurationIndex] = useState(DurationPeriod.weekly);
-  const { isLoading, appointments } = (
-    selectedDurationIndex !== DurationPeriod.daily ? useDailyAppointments : useAppointmentsByDurationPeriod
-  )(currentDate, selectedDurationIndex);
+  const [selectedDurationIndex, setSelectedDurationIndex] = useState(0);
+  const dailyAppointms = useDailyAppointments(currentDate, selectedDurationIndex);
+  const monthlyAppointments = useAppointmentsByDurationPeriod(currentDate, selectedDurationIndex);
+
+  const { isLoading, appointments } = selectedDurationIndex === 0 ? dailyAppointms : monthlyAppointments;
   if (isLoading) {
     return <StructuredListSkeleton role="progressbar" />;
   }

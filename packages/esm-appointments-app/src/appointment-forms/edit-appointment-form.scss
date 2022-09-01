@@ -11,8 +11,11 @@
 }
 
 .select {
-  width: 90%;
   margin-right: 90%;
+
+  &>div {
+    min-width: 20rem;
+  }
 }
 
 .childRow {

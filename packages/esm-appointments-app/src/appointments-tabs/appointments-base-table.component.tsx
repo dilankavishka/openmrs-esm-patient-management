@@ -25,7 +25,7 @@ import {
   Dropdown,
 } from '@carbon/react';
 import { Add, Cough, Medication, Omega } from '@carbon/react/icons';
-import { isDesktop, useLayoutType, ConfigurableLink, formatDatetime, parseDate } from '@openmrs/esm-framework';
+import { isDesktop, useLayoutType, ConfigurableLink, showModal } from '@openmrs/esm-framework';
 import { launchOverlay } from '../hooks/useOverlay';
 import { MappedAppointment } from '../types';
 import AppointmentDetails from '../appointment-details/appointment-details.component';
@@ -133,7 +133,7 @@ const AppointmentsBaseTable: React.FC<AppointmentsProps> = ({ appointments, isLo
     );
   };
 
-  const handleServiceTypeChange = ({ selectedItem }) => {
+  const handdleAppointmentTypeChange = ({ selectedItem }) => {
     setFilter(selectedItem.name);
   };
 
@@ -173,6 +173,10 @@ const AppointmentsBaseTable: React.FC<AppointmentsProps> = ({ appointments, isLo
     [t],
   );
 
+  const launchChangeStatusModal = () => {
+    const dispose = showModal('change-appointment-status-modal', { closeModal: () => dispose() });
+  };
+
   const tableRows = useMemo(() => {
     return (filteredRows.length ? filteredRows : appointments)?.map((appointment) => ({
       ...appointment,
@@ -195,7 +199,11 @@ const AppointmentsBaseTable: React.FC<AppointmentsProps> = ({ appointments, isLo
         ),
       },
       startButton: {
-        content: <Button kind="ghost">Start</Button>,
+        content: (
+          <Button onClick={launchChangeStatusModal} kind="ghost">
+            Start
+          </Button>
+        ),
       },
     }));
   }, [filteredRows, appointments]);
@@ -251,11 +259,11 @@ const AppointmentsBaseTable: React.FC<AppointmentsProps> = ({ appointments, isLo
                   id="serviceFilter"
                   initialSelectedItem={{ name: 'All' }}
                   label=""
-                  titleText={t('selectedService', 'Selected service ') + ':'}
+                  titleText={t('selectAppointmentType', 'Select appointment type')}
                   type="inline"
                   items={[{ name: 'All' }, ...services]}
                   itemToString={(item) => (item ? item.name : '')}
-                  onChange={handleServiceTypeChange}
+                  onChange={handdleAppointmentTypeChange}
                   size="sm"
                 />
                 <TableToolbarSearch

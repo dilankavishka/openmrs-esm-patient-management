@@ -12,18 +12,17 @@ const PatientSearch: React.FC = () => {
     launchOverlay(t('appointmentForm', 'Appointments Form'), <CreateAppointmentsForm patientUuid={patientUuid} />);
   };
 
+  const state = {
+    isSearchPage: false,
+    initialSearchTerm: '',
+    selectPatientAction: (patientUuid: string) => launchCreateAppointmentForm(patientUuid),
+    shouldNavigateToPatientSearchPage: false,
+  };
+
   return (
     <div className="omrs-main-content">
       <span className={styles.searchBarWrapper}>
-        <ExtensionSlot
-          extensionSlotName="patient-search-bar-slot"
-          state={{
-            selectPatientAction: launchCreateAppointmentForm,
-            buttonProps: {
-              kind: 'primary',
-            },
-          }}
-        />
+        <ExtensionSlot extensionSlotName="patient-search-bar-slot" state={state} />
       </span>
     </div>
   );

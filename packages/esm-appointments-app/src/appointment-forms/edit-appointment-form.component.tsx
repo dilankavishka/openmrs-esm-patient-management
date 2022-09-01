@@ -45,7 +45,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ appointment, mutate =
   const { appointmentKinds } = useConfig() as ConfigObject;
   const { daysOfTheWeek } = useConfig() as ConfigObject;
   const { appointmentStatuses } = useConfig() as ConfigObject;
-  const { patient } = usePatient(appointment.patientUuid);
+  const { patient, isLoading } = usePatient(appointment.patientUuid);
   const locations = useLocations();
   const session = useSession();
   const { providers } = useProviders();
@@ -121,13 +121,15 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ appointment, mutate =
 
   return (
     <div className={styles.formContainer}>
-      <ExtensionSlot
-        extensionSlotName="patient-header-slot"
-        state={{
-          patient,
-          patientUuid: appointment.patientUuid,
-        }}
-      />
+      {!isLoading && (
+        <ExtensionSlot
+          extensionSlotName="patient-header-slot"
+          state={{
+            patient,
+            patientUuid: appointment.patientUuid,
+          }}
+        />
+      )}
 
       <p>{t('appointmentDateAndTime', 'Appointments Date and Time')}</p>
 
@@ -200,6 +202,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ appointment, mutate =
             id="frequency"
             className={styles.select}
             invalidText="Required"
+            style={{ minWidth: '1.5rem' }}
             value={frequency}
             onChange={(event) => setFrequency(event.target.value)}
             light>

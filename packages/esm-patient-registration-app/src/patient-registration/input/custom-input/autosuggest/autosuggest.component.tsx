@@ -22,6 +22,7 @@ export const Autosuggest: React.FC<any> = ({
   const wrapper = useRef(null);
   const { t } = useTranslation();
   const { name, labelText } = searchProps;
+  const [value, setValue] = useState('');
 
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutsideComponent);
@@ -39,6 +40,7 @@ export const Autosuggest: React.FC<any> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
+    setValue(e.target.value);
     if (query) {
       getSearchResults(query).then((suggestions) => {
         setSuggestions(suggestions);
@@ -51,7 +53,10 @@ export const Autosuggest: React.FC<any> = ({
   const handleClick = (index: number) => {
     const display = getDisplayValue(suggestions[index]);
     const value = getFieldValue(suggestions[index]);
-    searchBox.current.input.value = display;
+    setValue(display);
+    if (searchBox.current.input) {
+      searchBox.current.input.value = display;
+    }
     onSuggestionSelected(name, value);
     setSuggestions([]);
   };
@@ -63,6 +68,7 @@ export const Autosuggest: React.FC<any> = ({
         <Search
           id="autosuggest"
           onChange={handleChange}
+          value={value}
           ref={searchBox}
           className={styles.autocompleteSearch}
           {...searchProps}

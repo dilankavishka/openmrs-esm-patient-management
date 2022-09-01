@@ -15,7 +15,7 @@ export const PhoneEmailField: React.FC = () => {
         <Input
           id="email"
           // This UUID will be fixed for all the distributions in OPENMRS
-          name="attributes.ac7d7773-fe9f-11ec-8b9b-0242ac1b0002"
+          name="attributes.b8d0b331-1d2d-4a9a-b741-1816f498bdb6"
           labelText={t('emailLabelText', 'Email')}
         />
       </div>
