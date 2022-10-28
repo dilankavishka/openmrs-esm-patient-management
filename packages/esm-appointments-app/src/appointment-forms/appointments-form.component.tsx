@@ -372,14 +372,14 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ appointment, patientU
         </div>
       ) : null}
 
-      {appointmentSummary.length > 0 && (
+      {selectedService && (
         <div className={styles.workLoadContainer}>
           <>
             <p className={styles.workLoadTitle}>
               {t(
                 'serviceWorkloadTitle',
-                `${appointmentService.name} clinic work load on the week of ${dayjs(
-                  first(appointmentSummary).date,
+                `${appointmentService?.name} clinic work load on the week of ${dayjs(
+                  first(appointmentSummary)?.date ?? new Date(),
                 ).format('DD/MM')}`,
               )}
             </p>
