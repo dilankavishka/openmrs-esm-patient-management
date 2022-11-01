@@ -61,7 +61,7 @@ export const configSchema = {
   allDayAppointment: {
     _type: Type.Boolean,
     _description: 'Whether to indicate the appointment start and end time as an entire day',
-    _default: true,
+    _default: false,
   },
 };
 
