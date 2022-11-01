@@ -21,13 +21,11 @@ import {
 } from '@carbon/react';
 import {
   useLocations,
-  useSession,
   showToast,
   showNotification,
   ExtensionSlot,
   usePatient,
   useConfig,
-  parseDate,
 } from '@openmrs/esm-framework';
 import { AppointmentPayload, MappedAppointment } from '../types';
 import { amPm, convertTime12to24 } from '../helpers';
@@ -47,6 +45,7 @@ import styles from './appointments-form.scss';
 import { useSWRConfig } from 'swr';
 import { useAppointmentDate } from '../helpers/time';
 import { getWeeklyCalendarDistribution } from './workload-helper';
+import { omrsDateFormat } from '../constants';
 
 interface AppointmentFormProps {
   appointment?: MappedAppointment;
@@ -54,7 +53,7 @@ interface AppointmentFormProps {
   context: string;
 }
 const AppointmentForm: React.FC<AppointmentFormProps> = ({ appointment, patientUuid, context }) => {
-  const initialState = {
+  const appointmentInitialState = {
     patientUuid,
     dateTime: undefined,
     location: '',
@@ -68,15 +67,13 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ appointment, patientU
     provider: '',
     appointmentNumber: undefined,
   };
-  const appointmentState = !isEmpty(appointment) ? appointment : initialState;
+  const appointmentState = !isEmpty(appointment) ? appointment : appointmentInitialState;
   const { t } = useTranslation();
-  const { mutate } = useSWRConfig();
   const { appointmentKinds } = useConfig() as ConfigObject;
-  const { daysOfTheWeek } = useConfig() as ConfigObject;
-  const { appointmentStatuses } = useConfig() as ConfigObject;
+  const { daysOfTheWeek, allDayAppointment, appointmentStatuses } = useConfig() as ConfigObject;
+  const { mutate } = useSWRConfig();
   const { patient, isLoading } = usePatient(patientUuid ?? appointmentState.patientUuid);
   const locations = useLocations();
-  const session = useSession();
   const { providers } = useProviders();
   const { services } = useServices();
   const [startDate, setStartDate] = useState(
@@ -96,7 +93,7 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ appointment, patientU
   const [visitDate, setVisitDate] = React.useState(
     appointmentState.dateTime ? new Date(appointmentState.dateTime) : new Date(),
   );
-  const [isFullDay, setIsFullDay] = useState<boolean>(false);
+  const [isFullDay, setIsFullDay] = useState<boolean>(allDayAppointment);
   const [day, setDay] = useState(appointmentState.dateTime);
   const [appointmentKind, setAppointmentKind] = useState(appointmentState.appointmentKind);
   const [appointmentStatus, setAppointmentStatus] = useState(appointmentState.status ?? 'Scheduled');
@@ -133,17 +130,13 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ appointment, patientU
     const [hours, minutes] = convertTime12to24(startDate, timeFormat);
     const providerUuid =
       providers.find((provider) => provider.display === selectedProvider)?.uuid ?? appointment.providers[0].uuid;
-    const startDatetime = new Date(
-      dayjs(visitDate).year(),
-      dayjs(visitDate).month(),
-      dayjs(visitDate).date(),
-      hours,
-      minutes,
-    );
+    const startDatetime = isFullDay
+      ? new Date(visitDate).setHours(7)
+      : new Date(dayjs(visitDate).year(), dayjs(visitDate).month(), dayjs(visitDate).date(), hours, minutes);
 
-    const endDatetime = dayjs(
-      new Date(dayjs(visitDate).year(), dayjs(visitDate).month(), dayjs(visitDate).date(), hours, minutes),
-    );
+    const endDatetime = isFullDay
+      ? new Date(visitDate).setHours(17)
+      : dayjs(new Date(dayjs(visitDate).year(), dayjs(visitDate).month(), dayjs(visitDate).date(), hours, minutes));
     const appointmentPayload: AppointmentPayload = {
       appointmentKind: appointmentKind,
       status: appointmentStatus,
@@ -190,6 +183,8 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ appointment, patientU
           setIsSubmitting(false);
           mutate(`/ws/rest/v1/appointment/appointmentStatus?forDate=${appointmentStartDate}&status=Scheduled`);
           mutate(`/ws/rest/v1/appointment/all?forDate=${appointmentStartDate}`);
+          const endDate = dayjs(new Date(appointmentStartDate).setHours(23, 59, 59, 59)).format(omrsDateFormat);
+          mutate(`/ws/rest/v1/appointment/appointmentSummary?startDate=${appointmentStartDate}&endDate=${endDate}`);
           closeOverlay();
         }
       },
@@ -308,7 +303,14 @@ const AppointmentForm: React.FC<AppointmentFormProps> = ({ appointment, patientU
       <p>{t('appointmentDateAndTime', 'Appointments Date and Time')}</p>
 
       <div className={styles.row}>
-        <Toggle onToggle={(value) => setIsFullDay(value)} id="allDay" labelA="Off" labelB="On" labelText="All Day" />
+        <Toggle
+          onToggle={(value) => setIsFullDay(value)}
+          id="allDay"
+          labelA="Off"
+          labelB="On"
+          labelText="All Day"
+          toggled={isFullDay}
+        />
         <DatePicker
           dateFormat="d/m/Y"
           datePickerType="single"

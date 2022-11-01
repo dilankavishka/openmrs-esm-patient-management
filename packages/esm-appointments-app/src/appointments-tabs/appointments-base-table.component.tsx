@@ -37,6 +37,7 @@ import VisitForm from '../patient-queue/visit-form/visit-form.component';
 import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isToday from 'dayjs/plugin/isToday';
+import uniqBy from 'lodash-es/uniqBy';
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isToday);
 
@@ -196,7 +197,11 @@ const AppointmentsBaseTable: React.FC<AppointmentsProps> = ({ appointments, isLo
     ],
     [t],
   );
-  const services = appointments.map(({ serviceType }) => ({ display: serviceType })) ?? [];
+  const services =
+    uniqBy(
+      appointments.map(({ serviceType }) => ({ display: serviceType })),
+      ({ display }) => display,
+    ) ?? [];
   const tableRows = useMemo(() => {
     return (filteredRows.length ? filteredRows : appointments)?.map((appointment, index) => ({
       ...appointment,

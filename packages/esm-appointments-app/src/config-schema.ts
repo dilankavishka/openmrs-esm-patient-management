@@ -58,6 +58,11 @@ export const configSchema = {
     _description: 'Configurable alternative URL for the Appointments UI. Eg, the Bahmni Appointments UI URL',
     _default: `${spaBasePath}`,
   },
+  allDayAppointment: {
+    _type: Type.Boolean,
+    _description: 'Whether to indicate the appointment start and end time as an entire day',
+    _default: true,
+  },
 };
 
 export interface ConfigObject {
@@ -71,4 +76,5 @@ export interface ConfigObject {
   useBahmniAppointmentsUI: boolean;
   useFullViewPrivilege: boolean;
   fullViewPrivilege: string;
+  allDayAppointment: boolean;
 }
